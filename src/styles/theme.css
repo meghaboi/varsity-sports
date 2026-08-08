@@ -97,14 +97,20 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid rgba(201,162,39,0.12);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
-.hero-nav-logo { display: flex; align-items: center; gap: 0.65rem; }
+.hero-nav-logo { display: flex; align-items: center; gap: 0.85rem; }
+.nav-logo-circle {
+  width: 46px; height: 46px; border-radius: 50%;
+  overflow: hidden; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 15px rgba(201,162,39,0.15);
+  padding: 2px;
+}
 .nav-logo-img {
-  width: 44px; height: 44px; object-fit: contain;
-  filter: brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg);
+  width: 100%; height: 100%; object-fit: contain;
 }
 .nav-brand {
   font-family: 'Playfair Display', serif;
-  font-size: 1.05rem; font-weight: 700;
+  font-size: 1.15rem; font-weight: 700;
   color: var(--cream); letter-spacing: 0.01em;
 }
 .hero-nav-right { display: flex; align-items: center; gap: 1.5rem; }
@@ -165,32 +171,21 @@ a { color: inherit; text-decoration: none; }
 }
 .stat-divider { width: 1px; height: 2.5rem; background: rgba(201,162,39,0.25); }
 
-/* Right crest */
+/* Right Globe */
 .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
 .hero-crest-glow {
-  position: absolute; width: 420px; height: 420px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(201,162,39,0.2) 0%, transparent 70%);
+  position: absolute; width: 440px; height: 440px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,162,39,0.18) 0%, transparent 70%);
   animation: crestPulse 4s ease-in-out infinite; pointer-events: none;
 }
 @keyframes crestPulse {
   0%, 100% { transform: scale(1); opacity: 0.8; }
   50%        { transform: scale(1.08); opacity: 1; }
 }
-.hero-crest-wrap {
+.hero-globe-wrap {
   position: relative; z-index: 2;
-  width: clamp(240px, 35vw, 420px); height: clamp(240px, 35vw, 420px);
-  border-radius: 50%; overflow: hidden;
+  width: clamp(300px, 38vw, 480px); height: clamp(300px, 38vw, 480px);
   display: flex; align-items: center; justify-content: center;
-  background: var(--black);
-  box-shadow:
-    0 0 0 1px rgba(201,162,39,0.15),
-    0 0 50px rgba(201,162,39,0.2),
-    0 0 120px rgba(201,162,39,0.08),
-    0 30px 80px rgba(0,0,0,0.7);
-}
-.hero-crest-img {
-  width: 85%; height: 85%; object-fit: contain; display: block;
-  filter: brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg) brightness(0.85);
 }
 
 /* Scroll indicator */
@@ -241,8 +236,8 @@ a { color: inherit; text-decoration: none; }
   background: rgba(22,18,12,0.6);
   border: 1px solid rgba(201,162,39,0.12);
   border-radius: 16px;
-  padding: 2rem 1.5rem;
-  display: flex; flex-direction: column; gap: 0.8rem;
+  padding: 2.5rem 1.8rem;
+  display: flex; flex-direction: column; gap: 0.9rem;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .about-card:hover {
@@ -250,9 +245,16 @@ a { color: inherit; text-decoration: none; }
   border-color: rgba(201,162,39,0.3);
   box-shadow: 0 12px 40px rgba(0,0,0,0.4);
 }
-.about-icon { font-size: 1.6rem; }
+.card-icon-container {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: rgba(201,162,39,0.08);
+  border: 1px solid rgba(201,162,39,0.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+}
+.card-icon { width: 22px; height: 22px; }
 .about-card h3 {
-  font-family: 'Playfair Display', serif; font-size: 1.1rem;
+  font-family: 'Playfair Display', serif; font-size: 1.15rem;
   font-weight: 700; color: var(--cream);
 }
 .about-card p {
@@ -460,9 +462,14 @@ form.apply-form {
 .footer-brand {
   display: flex; align-items: center; gap: 1rem;
 }
+.footer-logo-circle {
+  width: 48px; height: 48px; border-radius: 50%;
+  overflow: hidden; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  padding: 2px;
+}
 .footer-logo {
-  width: 48px; height: 48px; object-fit: contain;
-  filter: brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg) brightness(0.8);
+  width: 100%; height: 100%; object-fit: contain;
 }
 .footer-brand-name {
   font-family: 'Playfair Display', serif;
@@ -517,7 +524,7 @@ form.apply-form {
   .hero-body { padding: 2rem 1.25rem 4rem; }
   .scroll-indicator { display: none; }
   .hero-stats { gap: 1rem; }
-  .hero-crest-wrap { width: 220px; height: 220px; }
+  .hero-globe-wrap { width: 300px; height: 300px; }
   .about-strip { padding: 3.5rem 1.25rem; }
   .apply-section { padding: 4rem 1.25rem; }
   form.apply-form { padding: 1.75rem 1.25rem; border-radius: 16px; }

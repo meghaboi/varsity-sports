@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import Silk from '../components/Silk.jsx';
+import Globe from '../components/Globe.jsx';
 import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY } from '../config.js';
+import logoImg from '../assets/logo.jpeg';
 
 const initialForm = {
   name: '',
@@ -71,13 +73,9 @@ export default function Home() {
         {/* Navbar */}
         <nav className="hero-nav">
           <div className="hero-nav-logo">
-            <img
-              src="/varsity-sports/emblem.jpg"
-              alt="Varsity Sports"
-              className="nav-logo-img"
-              style={{ mixBlendMode: 'multiply', background: 'transparent' }}
-              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-            />
+            <div className="nav-logo-circle">
+              <img src={logoImg} alt="Varsity Sports" className="nav-logo-img" />
+            </div>
             <span className="nav-brand">Varsity Sports</span>
           </div>
           <div className="hero-nav-right">
@@ -123,16 +121,11 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right — emblem crest */}
+          {/* Right — 3D Globe component */}
           <div className="hero-visual">
             <div className="hero-crest-glow" />
-            <div className="hero-crest-wrap">
-              <img
-                src="/varsity-sports/emblem.jpg"
-                alt="Varsity Sports crest"
-                className="hero-crest-img"
-                style={{ mixBlendMode: 'multiply' }}
-              />
+            <div className="hero-globe-wrap">
+              <Globe />
             </div>
           </div>
         </div>
@@ -150,22 +143,50 @@ export default function Home() {
           <p className="about-eyebrow">Why Varsity Sports?</p>
           <div className="about-grid">
             <div className="about-card">
-              <span className="about-icon">🏆</span>
+              <div className="card-icon-container">
+                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                  <path d="M4 22h16" />
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                  <path d="M12 2a7 7 0 0 0-7 7c0 2.5 1 4.5 3 6h8c2-1.5 3-3.5 3-7a7 7 0 0 0-7-7z" />
+                </svg>
+              </div>
               <h3>College App Edge</h3>
               <p>A first-tier, verifiable extracurricular that stands out on any application.</p>
             </div>
             <div className="about-card">
-              <span className="about-icon">📜</span>
+              <div className="card-icon-container">
+                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+              </div>
               <h3>Recommendation Letters</h3>
               <p>Earn a personalised letter from our leadership team at season end.</p>
             </div>
             <div className="about-card">
-              <span className="about-icon">🎓</span>
+              <div className="card-icon-container">
+                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c0 2 2.5 3 6 3s6-1 6-3v-5" />
+                </svg>
+              </div>
               <h3>Official Certificate</h3>
               <p>A verified Varsity Sports Volunteer certificate issued after the season.</p>
             </div>
             <div className="about-card">
-              <span className="about-icon">🤝</span>
+              <div className="card-icon-container">
+                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
               <h3>Real Experience</h3>
               <p>Work inside the biggest basketball season in India — hands-on, season-long.</p>
             </div>
@@ -269,7 +290,13 @@ export default function Home() {
                       </>
                     ) : (
                       <>
-                        <div className="file-upload-icon">↑</div>
+                        <div className="file-upload-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                          </svg>
+                        </div>
                         <p className="file-upload-label">Drag &amp; drop your resume here</p>
                         <p className="file-upload-hint">or click to browse — PDF, DOC, DOCX</p>
                       </>
@@ -308,12 +335,9 @@ export default function Home() {
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-brand">
-            <img
-              src="/varsity-sports/emblem.jpg"
-              alt="Varsity Sports"
-              className="footer-logo"
-              style={{ mixBlendMode: 'multiply' }}
-            />
+            <div className="footer-logo-circle">
+              <img src={logoImg} alt="Varsity Sports" className="footer-logo" />
+            </div>
             <div>
               <p className="footer-brand-name">Varsity Sports</p>
               <p className="footer-brand-sub">Changing Sports in India</p>
