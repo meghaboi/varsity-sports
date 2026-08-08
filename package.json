@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy:cloudflare": "wrangler pages deploy dist --project-name=varsity-sports"
+    "deploy:cloudflare": "wrangler deploy"
   },
   "dependencies": {
     "@react-three/fiber": "^8.18.0",

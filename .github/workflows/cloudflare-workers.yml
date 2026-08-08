@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Workers
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   deployments: write
 
 concurrency:
-  group: cloudflare-pages
+  group: cloudflare-workers
   cancel-in-progress: true
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build for Cloudflare Pages
+      - name: Build Worker assets
         run: npm run build
         env:
           VITE_BASE_PATH: /
@@ -48,11 +48,11 @@ jobs:
             echo "Cloudflare deploy skipped. Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as repository secrets."
           fi
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy Worker
         if: steps.cloudflare.outputs.configured == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=varsity-sports --branch=main
+          command: deploy
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

@@ -15,22 +15,22 @@ npm run dev
 npm run build
 ```
 
-## Cloudflare Pages
+## Cloudflare Workers
 
-Use these Cloudflare Pages settings:
+The site is deployed as a Cloudflare Worker with Static Assets. Use these settings:
 
 - Build command: `npm run build`
 - Build output directory: `dist`
 - Deploy command: `npm run deploy:cloudflare`
 
-Do not use `npx wrangler deploy`. That command targets Cloudflare Workers. This repository is configured for Pages and uses `wrangler pages deploy`.
+The deploy script runs `wrangler deploy`. The `assets.directory` setting in `wrangler.jsonc` publishes the contents of `dist` and serves the React site with SPA fallback handling.
 
 For GitHub Actions deployments, add these repository secrets:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-The API token needs Account, Cloudflare Pages, Edit permission. Once both secrets exist, `.github/workflows/cloudflare-pages.yml` deploys every push to `main`.
+The API token needs Account, Workers Scripts, Edit permission. Once both secrets exist, `.github/workflows/cloudflare-workers.yml` deploys every push to `main`.
 
 ## GitHub Pages
 
