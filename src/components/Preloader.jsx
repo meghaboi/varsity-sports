@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import logoImg from '../assets/logo.jpeg';
+import logoImg from '../assets/logo-mark.png';
 import { Boid } from './Boids.js';
 
 export default function Preloader({ onDone }) {
   const canvasRef = useRef(null);
+  const exitTimerRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [ready, setReady] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
@@ -13,7 +15,6 @@ export default function Preloader({ onDone }) {
     let animationFrame;
     let progressFrame;
     let doneTimer;
-    let exitTimer;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const resize = () => {
@@ -65,18 +66,22 @@ export default function Preloader({ onDone }) {
     progressFrame = requestAnimationFrame(updateProgress);
     doneTimer = window.setTimeout(() => {
       setProgress(100);
-      setLeaving(true);
-      exitTimer = window.setTimeout(onDone, 650);
+      setReady(true);
     }, duration);
 
     return () => {
       cancelAnimationFrame(animationFrame);
       cancelAnimationFrame(progressFrame);
       clearTimeout(doneTimer);
-      clearTimeout(exitTimer);
+      clearTimeout(exitTimerRef.current);
       window.removeEventListener('resize', resize);
     };
   }, [onDone]);
+
+  const enterSite = () => {
+    setLeaving(true);
+    exitTimerRef.current = window.setTimeout(onDone, 650);
+  };
 
   return (
     <div className={`preloader ${leaving ? 'is-leaving' : ''}`}>
@@ -89,7 +94,14 @@ export default function Preloader({ onDone }) {
         <div className="preloader-meter" aria-label={`Loading ${progress}%`}>
           <span style={{ width: `${progress}%` }} />
         </div>
-        <p className="preloader-progress">Entering Varsity&nbsp;&nbsp;{String(progress).padStart(3, '0')}</p>
+        {ready ? (
+          <button type="button" className="preloader-enter" onClick={enterSite}>
+            Explore Varsity
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" /></svg>
+          </button>
+        ) : (
+          <p className="preloader-progress">Preparing Varsity&nbsp;&nbsp;{String(progress).padStart(3, '0')}</p>
+        )}
       </div>
     </div>
   );

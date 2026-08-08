@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import Silk from '../components/Silk.jsx';
 import Basketball from '../components/Basketball.jsx';
+import StatsSection from '../components/StatsSection.jsx';
 import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY } from '../config.js';
-import logoImg from '../assets/logo.jpeg';
+import logoImg from '../assets/logo-mark.png';
 
 const initialForm = {
   name: '',
@@ -110,11 +111,6 @@ export default function Home() {
               <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-primary">Join Varsity <Arrow /></a>
               <a href="#about" onClick={scrollToSection('about')} className="text-link">Explore the experience <Arrow /></a>
             </div>
-            <dl className="hero-stats">
-              <div><dt>50+</dt><dd>School teams</dd></div>
-              <div><dt>85K+</dt><dd>Students represented</dd></div>
-              <div><dt>3</dt><dd>Countries reached</dd></div>
-            </dl>
           </div>
           <div className="hero-art"><Basketball /></div>
         </div>
@@ -122,6 +118,7 @@ export default function Home() {
       </header>
 
       <main>
+        <StatsSection />
         <section className="about-section" id="about">
           <div className="section-shell">
             <div className="section-intro">
