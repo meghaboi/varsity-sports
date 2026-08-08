@@ -20,9 +20,7 @@ export default function Globe() {
           .backgroundColor('rgba(0,0,0,0)')
           .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg')
           .bumpImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png')
-          .showAtmosphere(true)
-          .atmosphereColor('#d4af37')
-          .atmosphereDaylightAlpha(0.15);
+          .showAtmosphere(true);
 
         // Configure controls
         const controls = world.controls();
