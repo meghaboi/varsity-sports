@@ -2,297 +2,170 @@ import { useEffect, useRef, useState } from 'react';
 import logoImg from '../assets/logo.jpeg';
 
 export default function Preloader({ onDone }) {
-  const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [fading, setFading] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
-    // ───── PROGRESS BAR SIMULATION ─────
-    const start = performance.now();
-    const duration = 2800;
-    let rafId;
-
-    const tick = (now) => {
-      const p = Math.min((now - start) / duration, 1);
-      setProgress(Math.round(p * 100));
-      if (p < 1) {
-        rafId = requestAnimationFrame(tick);
-      } else {
-        setFading(true);
-        setTimeout(() => onDone(), 550);
-      }
-    };
-    rafId = requestAnimationFrame(tick);
-
-    // ───── LOCAL CANVAS BOIDS SIMULATION ─────
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const context = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    let animationFrame;
+    let progressFrame;
+    let doneTimer;
+    let exitTimer;
+    const pointer = { x: -1000, y: -1000 };
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const resize = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
     };
-    window.addEventListener('resize', handleResize);
-
-    const mouse = { x: -1000, y: -1000 };
-    const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
-    const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
-
-    const boids = [];
-    const numBoids = 75; // high density of boids
 
     class Boid {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 5;
-        this.vy = (Math.random() - 0.5) * 5;
-        this.size = Math.random() * 2 + 3.5;
-        this.maxSpeed = 4.5;
-        this.minSpeed = 2.0;
+        this.vx = (Math.random() - 0.45) * 3.2;
+        this.vy = (Math.random() - 0.5) * 3.2;
+        this.size = 3 + Math.random() * 4;
+        this.tone = Math.random();
       }
 
-      update() {
-        let avgX = 0, avgY = 0, avgVx = 0, avgVy = 0, neighbors = 0;
-        let avoidX = 0, avoidY = 0;
+      update(flock) {
+        let centerX = 0;
+        let centerY = 0;
+        let alignX = 0;
+        let alignY = 0;
+        let separateX = 0;
+        let separateY = 0;
+        let count = 0;
 
-        for (let other of boids) {
-          if (other === this) continue;
+        flock.forEach((other) => {
+          if (other === this) return;
           const dx = other.x - this.x;
           const dy = other.y - this.y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist < 100) {
-            avgX += other.x;
-            avgY += other.y;
-            avgVx += other.vx;
-            avgVy += other.vy;
-            neighbors++;
-
-            if (dist < 30) {
-              avoidX -= dx;
-              avoidY -= dy;
+          const distance = Math.hypot(dx, dy);
+          if (distance < 105) {
+            centerX += other.x;
+            centerY += other.y;
+            alignX += other.vx;
+            alignY += other.vy;
+            count += 1;
+            if (distance < 28) {
+              separateX -= dx / Math.max(distance, 1);
+              separateY -= dy / Math.max(distance, 1);
             }
           }
+        });
+
+        if (count) {
+          this.vx += ((centerX / count) - this.x) * 0.0008 + ((alignX / count) - this.vx) * 0.025;
+          this.vy += ((centerY / count) - this.y) * 0.0008 + ((alignY / count) - this.vy) * 0.025;
         }
+        this.vx += separateX * 0.065;
+        this.vy += separateY * 0.065;
 
-        if (neighbors > 0) {
-          avgX /= neighbors;
-          avgY /= neighbors;
-          avgVx /= neighbors;
-          avgVy /= neighbors;
-
-          this.vx += (avgX - this.x) * 0.006;
-          this.vy += (avgY - this.y) * 0.006;
-
-          this.vx += (avgVx - this.vx) * 0.025;
-          this.vy += (avgVy - this.vy) * 0.025;
-        }
-
-        this.vx += avoidX * 0.06;
-        this.vy += avoidY * 0.06;
-
-        const mdx = mouse.x - this.x;
-        const mdy = mouse.y - this.y;
-        const mdist = Math.hypot(mdx, mdy);
-        if (mdist < 180) {
-          this.vx -= (mdx / mdist) * 0.6;
-          this.vy -= (mdy / mdist) * 0.6;
+        const pointerDistance = Math.hypot(pointer.x - this.x, pointer.y - this.y);
+        if (pointerDistance < 150) {
+          this.vx -= ((pointer.x - this.x) / Math.max(pointerDistance, 1)) * 0.16;
+          this.vy -= ((pointer.y - this.y) / Math.max(pointerDistance, 1)) * 0.16;
         }
 
         const speed = Math.hypot(this.vx, this.vy);
-        if (speed > this.maxSpeed) {
-          this.vx = (this.vx / speed) * this.maxSpeed;
-          this.vy = (this.vy / speed) * this.maxSpeed;
-        } else if (speed < this.minSpeed) {
-          this.vx = (this.vx / speed) * this.minSpeed;
-          this.vy = (this.vy / speed) * this.minSpeed;
+        const maxSpeed = 3.4;
+        if (speed > maxSpeed) {
+          this.vx = (this.vx / speed) * maxSpeed;
+          this.vy = (this.vy / speed) * maxSpeed;
         }
-
         this.x += this.vx;
         this.y += this.vy;
-
-        if (this.x < 0) this.x = width;
-        if (this.x > width) this.x = 0;
-        if (this.y < 0) this.y = height;
-        if (this.y > height) this.y = 0;
+        if (this.x < -20) this.x = width + 20;
+        if (this.x > width + 20) this.x = -20;
+        if (this.y < -20) this.y = height + 20;
+        if (this.y > height + 20) this.y = -20;
       }
 
       draw() {
         const angle = Math.atan2(this.vy, this.vx);
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(angle);
-
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#d4af37';
-        ctx.fillStyle = 'rgba(212, 175, 87, 0.85)';
-        ctx.beginPath();
-        ctx.moveTo(this.size * 2.2, 0);
-        ctx.lineTo(-this.size, -this.size * 0.7);
-        ctx.lineTo(-this.size * 0.5, 0);
-        ctx.lineTo(-this.size, this.size * 0.7);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
+        context.save();
+        context.translate(this.x, this.y);
+        context.rotate(angle);
+        context.fillStyle = this.tone > 0.25 ? 'rgba(231, 194, 111, .82)' : 'rgba(246, 240, 224, .72)';
+        context.beginPath();
+        context.moveTo(this.size * 2.5, 0);
+        context.lineTo(-this.size, -this.size * 0.72);
+        context.lineTo(-this.size * 0.3, 0);
+        context.lineTo(-this.size, this.size * 0.72);
+        context.closePath();
+        context.fill();
+        context.restore();
       }
     }
 
-    for (let i = 0; i < numBoids; i++) {
-      boids.push(new Boid());
-    }
-
-    let boidsRafId;
-    const animateBoids = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Draw dark background texture
-      ctx.fillStyle = '#080808';
-      ctx.fillRect(0, 0, width, height);
-
-      boids.forEach((boid) => {
-        boid.update();
+    resize();
+    const flock = Array.from({ length: reducedMotion ? 28 : Math.min(92, Math.round(width / 17)) }, () => new Boid());
+    const draw = () => {
+      context.clearRect(0, 0, width, height);
+      flock.forEach((boid) => {
+        if (!reducedMotion) boid.update(flock);
         boid.draw();
       });
-
-      boidsRafId = requestAnimationFrame(animateBoids);
+      animationFrame = requestAnimationFrame(draw);
     };
-    animateBoids();
+
+    const start = performance.now();
+    const duration = reducedMotion ? 500 : 2200;
+    const updateProgress = (now) => {
+      const value = Math.min((now - start) / duration, 1);
+      setProgress(Math.round((1 - Math.pow(1 - value, 3)) * 100));
+      if (value < 1) progressFrame = requestAnimationFrame(updateProgress);
+    };
+
+    const move = (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+    };
+    window.addEventListener('resize', resize);
+    window.addEventListener('pointermove', move);
+    draw();
+    progressFrame = requestAnimationFrame(updateProgress);
+    doneTimer = window.setTimeout(() => {
+      setProgress(100);
+      setLeaving(true);
+      exitTimer = window.setTimeout(onDone, 650);
+    }, duration);
 
     return () => {
-      cancelAnimationFrame(rafId);
-      cancelAnimationFrame(boidsRafId);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
+      cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(progressFrame);
+      clearTimeout(doneTimer);
+      clearTimeout(exitTimer);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('pointermove', move);
     };
   }, [onDone]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#080808', // Solid background so the home page doesn't show underneath
-        opacity: fading ? 0 : 1,
-        transition: 'opacity 0.5s ease',
-        pointerEvents: fading ? 'none' : 'all',
-      }}
-    >
-      {/* Background Boids Canvas */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 0,
-        }}
-      />
-
-      {/* Centered Content */}
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
-        <div
-          style={{
-            width: 140,
-            height: 140,
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 50px rgba(201,162,39,0.3)',
-            animation: 'preloaderPulse 2.5s ease-in-out infinite',
-          }}
-        >
-          <img
-            src={logoImg}
-            alt="Varsity Sports"
-            style={{ width: '92%', height: '92%', objectFit: 'contain' }}
-          />
+    <div className={`preloader ${leaving ? 'is-leaving' : ''}`}>
+      <canvas ref={canvasRef} className="preloader-canvas" aria-hidden="true" />
+      <div className="preloader-vignette" />
+      <div className="preloader-content">
+        <img src={logoImg} alt="Varsity Sports" className="preloader-logo" />
+        <p className="preloader-kicker">Changing sports in India</p>
+        <h1 className="preloader-title">Varsity Sports</h1>
+        <div className="preloader-meter" aria-label={`Loading ${progress}%`}>
+          <span style={{ width: `${progress}%` }} />
         </div>
-
-        <div style={{ textAlign: 'center' }}>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '0.72rem',
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            color: '#c9a227',
-            margin: '0 0 0.4rem',
-            fontWeight: 600,
-          }}>
-            CHANGING SPORTS IN INDIA
-          </p>
-          <h2 style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: '1.75rem',
-            fontWeight: 700,
-            color: '#f2ede4',
-            margin: 0,
-            letterSpacing: '0.02em',
-          }}>
-            Varsity Sports
-          </h2>
-        </div>
-
-        <div style={{ width: 220, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{
-            width: '100%',
-            height: 3,
-            background: 'rgba(201,162,39,0.15)',
-            borderRadius: 3,
-            overflow: 'hidden',
-          }}>
-            <div style={{
-              width: `${progress}%`,
-              height: '100%',
-              background: 'linear-gradient(90deg, #c9a227, #f0c84a)',
-              borderRadius: 3,
-              boxShadow: '0 0 8px rgba(201,162,39,0.7)',
-            }} />
-          </div>
-          <span style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '0.7rem',
-            color: 'rgba(201,162,39,0.7)',
-            letterSpacing: '0.15em',
-            fontWeight: 500,
-          }}>
-            {progress}%
-          </span>
-        </div>
+        <p className="preloader-progress">Entering Varsity&nbsp;&nbsp;{String(progress).padStart(3, '0')}</p>
       </div>
-
-      <style>{`
-        @keyframes preloaderPulse {
-          0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(201,162,39,0.3); }
-          50% { transform: scale(1.03); box-shadow: 0 0 70px rgba(201,162,39,0.55); }
-        }
-      `}</style>
     </div>
   );
 }

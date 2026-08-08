@@ -2,7 +2,7 @@
 // SplitForms Configuration
 // ---------------------------------------------------------------------
 
-// The inbox that receives new volunteer applications via SplitForms
+// The inbox that receives new member applications via SplitForms
 export const RECIPIENT_EMAIL = 'meghanadh.pamidi@gmail.com';
 
 export const SPLITFORMS_ENDPOINT = 'https://splitforms.com/api/submit';

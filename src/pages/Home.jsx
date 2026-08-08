@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Silk from '../components/Silk.jsx';
-import Globe from '../components/Globe.jsx';
+import Basketball from '../components/Basketball.jsx';
 import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY } from '../config.js';
 import logoImg from '../assets/logo.jpeg';
 
@@ -14,425 +14,231 @@ const initialForm = {
   experience: '',
 };
 
+const universities = [
+  { name: 'Stanford University', domain: 'stanford.edu', short: 'Stanford' },
+  { name: 'University of California, Berkeley', domain: 'berkeley.edu', short: 'UC Berkeley' },
+  { name: 'University of California, Los Angeles', domain: 'ucla.edu', short: 'UCLA' },
+  { name: 'University of Southern California', domain: 'usc.edu', short: 'USC' },
+  { name: 'University of California, San Diego', domain: 'ucsd.edu', short: 'UC San Diego' },
+  { name: 'University of British Columbia', domain: 'ubc.ca', short: 'UBC' },
+  { name: 'New York University', domain: 'nyu.edu', short: 'NYU' },
+  { name: 'Purdue University', domain: 'purdue.edu', short: 'Purdue' },
+  { name: 'University of Bath', domain: 'bath.ac.uk', short: 'Bath' },
+  { name: 'Indiana University Bloomington', domain: 'iu.edu', short: 'Indiana' },
+];
+
+const pressStories = [
+  {
+    source: 'The Hans India',
+    date: '02 Aug 2025',
+    title: 'Hyderabad Black Hawks to launch school volleyball league with Varsity Sports',
+    copy: 'A five-week competition bringing professional league standards, school spirit, and a new stage to young athletes across Hyderabad.',
+    href: 'https://www.thehansindia.com/sports/hyderabad-black-hawks-to-launch-school-volleyball-league-with-varsity-sports-993281',
+  },
+  {
+    source: 'Telangana Today',
+    date: '17 Aug 2025',
+    title: 'Hyderabad Varsity Volleyball League qualifiers set for league stage',
+    copy: 'More than 50 IB and CBSE school teams entered the competition, representing a student community of over 85,000.',
+    href: 'https://telanganatoday.com/hyderabad-varsity-volleyball-league-qualifiers-set-for-league-stage',
+  },
+  {
+    source: 'The New Indian Express',
+    date: '09 Jul 2024',
+    title: 'Varsity Sports is revolutionising high school athletics in Hyderabad',
+    copy: 'A look at how student-led sports programming is building professional competition and stronger school communities.',
+    href: 'https://www.newindianexpress.com/cities/hyderabad/2024/Jul/09/varsity-sports-revolutionising-high-school-athletics-in-hyderabad',
+  },
+];
+
+const Arrow = () => (
+  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" /></svg>
+);
+
 export default function Home() {
   const [form, setForm] = useState(initialForm);
-  const [status, setStatus] = useState('idle'); // idle | submitting | done | error
+  const [status, setStatus] = useState('idle');
 
-  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
-
-  const scrollToSection = (id) => (e) => {
-    e.preventDefault();
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  const update = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
+  const scrollToSection = (id) => (event) => {
+    event.preventDefault();
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formElement = e.currentTarget;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setStatus('submitting');
     try {
-      const data = new FormData(formElement);
-
-      console.log('--- Preparing SplitForms Submission ---');
-      for (let [key, val] of data.entries()) {
-        console.log(`[Field] ${key}: "${val}"`);
-      }
-      console.log('---------------------------------------');
-
-      const res = await fetch(SPLITFORMS_ENDPOINT, {
+      const response = await fetch(SPLITFORMS_ENDPOINT, {
         method: 'POST',
         headers: { Accept: 'application/json' },
-        body: data,
+        body: new FormData(event.currentTarget),
       });
-      const result = await res.json().catch(() => ({}));
-
-      if (res.ok && result.success) {
-        setStatus('done');
-        setForm(initialForm);
-      } else {
-        setStatus('error');
-      }
-    } catch (err) {
-      console.error('Submission error:', err);
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error('Submission failed');
+      setStatus('done');
+      setForm(initialForm);
+    } catch {
       setStatus('error');
     }
   };
 
   return (
     <>
-      {/* ───── HERO ───── */}
-      <section className="hero" id="home">
-        <div className="hero-bg">
-          <Silk color="#2a1800" speed={8} scale={1.4} noiseIntensity={1.8} rotation={0.15} />
-        </div>
+      <header className="hero" id="home">
+        <div className="hero-bg"><Silk color="#251701" speed={7} scale={1.25} noiseIntensity={1.35} rotation={0.1} /></div>
         <div className="hero-overlay" />
-
-        {/* Navbar */}
-        <nav className="hero-nav">
-          <div className="hero-nav-logo">
-            <div className="nav-logo-circle">
-              <img src={logoImg} alt="Varsity Sports" className="nav-logo-img" />
-            </div>
-            <span className="nav-brand">Varsity Sports</span>
+        <nav className="site-nav" aria-label="Main navigation">
+          <a className="brand" href="#home" onClick={scrollToSection('home')}>
+            <img src={logoImg} alt="" />
+            <span>Varsity Sports</span>
+          </a>
+          <div className="nav-links">
+            <a href="#about" onClick={scrollToSection('about')}>About</a>
+            <a href="#outcomes" onClick={scrollToSection('outcomes')}>Outcomes</a>
+            <a href="#press" onClick={scrollToSection('press')}>Press</a>
           </div>
-          <div className="hero-nav-right">
-            <span className="nav-tag">Volunteer Recruitment</span>
-            <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-sm">Apply Now</a>
-          </div>
+          <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-primary btn-small">Join now <Arrow /></a>
         </nav>
 
-        {/* Two-column editorial body */}
         <div className="hero-body">
-          {/* Left */}
-          <div className="hero-text">
-            <p className="hero-eyebrow">Varsity Sports Presents</p>
-            <h1 className="hero-headline">
-              The Biggest<br />
-              <em>Basketball</em><br />
-              Season.
-            </h1>
-            <p className="hero-sub">
-              We're recruiting dedicated season-long Varsity Members.
-              Earn a first-tier college app activity, recommendation letters, and a certificate.
-            </p>
-            <div className="hero-ctas">
-              <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-primary">Apply Now →</a>
-              <a href="#about" onClick={scrollToSection('about')} className="btn btn-ghost">Learn More →</a>
+          <div className="hero-copy">
+            <p className="eyebrow">Hyderabad's student sports community</p>
+            <h1>Build the season.<br /><em>Shape your future.</em></h1>
+            <p className="hero-lede">Join the team creating India's most ambitious school sports experiences. Lead real events, build lasting skills, and become part of a community that opens doors.</p>
+            <div className="hero-actions">
+              <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-primary">Join Varsity <Arrow /></a>
+              <a href="#about" onClick={scrollToSection('about')} className="text-link">Explore the experience <Arrow /></a>
             </div>
+            <dl className="hero-stats">
+              <div><dt>50+</dt><dd>School teams</dd></div>
+              <div><dt>85K+</dt><dd>Students represented</dd></div>
+              <div><dt>3</dt><dd>Countries reached</dd></div>
+            </dl>
           </div>
-
-          {/* Right — 3D Globe component */}
-          <div className="hero-visual">
-            <div className="hero-crest-glow" />
-            <div className="hero-globe-wrap">
-              <Globe />
-            </div>
-          </div>
+          <div className="hero-art"><Basketball /></div>
         </div>
+        <a className="scroll-cue" href="#about" onClick={scrollToSection('about')} aria-label="Scroll to learn more"><span>Scroll</span><i /></a>
+      </header>
 
-        {/* Scroll indicator */}
-        <div className="scroll-indicator">
-          <span>Scroll to enter</span>
-          <div className="scroll-line" />
-        </div>
-      </section>
-
-      {/* ───── ABOUT STRIP ───── */}
-      <section id="about" className="about-strip">
-        <div className="about-inner">
-          <p className="about-eyebrow">Why Varsity Sports?</p>
-          <div className="about-grid">
-            <div className="about-card">
-              <div className="card-icon-container">
-                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                  <path d="M4 22h16" />
-                  <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
-                  <path d="M12 2a7 7 0 0 0-7 7c0 2.5 1 4.5 3 6h8c2-1.5 3-3.5 3-7a7 7 0 0 0-7-7z" />
-                </svg>
-              </div>
-              <h3>College App Edge</h3>
-              <p>A first-tier, verifiable extracurricular that stands out on any application.</p>
+      <main>
+        <section className="about-section" id="about">
+          <div className="section-shell">
+            <div className="section-intro">
+              <p className="eyebrow">More than a position</p>
+              <h2>Own a piece of the game.</h2>
+              <p>Varsity members work at the centre of live school sport. You will take on meaningful responsibility, learn from a driven team, and build proof of what you can do.</p>
             </div>
-            <div className="about-card">
-              <div className="card-icon-container">
-                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                  <polyline points="10 9 9 9 8 9" />
-                </svg>
-              </div>
-              <h3>Recommendation Letters</h3>
-              <p>Earn a personalised letter from our leadership team at season end.</p>
-            </div>
-            <div className="about-card">
-              <div className="card-icon-container">
-                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                  <path d="M6 12v5c0 2 2.5 3 6 3s6-1 6-3v-5" />
-                </svg>
-              </div>
-              <h3>Official Certificate</h3>
-              <p>A verified Varsity Sports Volunteer certificate issued after the season.</p>
-            </div>
-            <div className="about-card">
-              <div className="card-icon-container">
-                <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-              <h3>Real Experience</h3>
-              <p>Work inside the biggest basketball season in India — hands-on, season-long.</p>
+            <div className="benefit-grid">
+              <article><span>01</span><h3>Lead real events</h3><p>Work across operations, media, partnerships, and the matchday experience.</p></article>
+              <article><span>02</span><h3>Build your profile</h3><p>Turn your contribution into a credible, verifiable activity for university applications.</p></article>
+              <article><span>03</span><h3>Earn recognition</h3><p>Complete the season with an official certificate and a personalised recommendation.</p></article>
+              <article><span>04</span><h3>Find your people</h3><p>Join ambitious students who care about sport, leadership, and creating something bigger.</p></article>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ───── ETHOS SECTION (Built by Students, for Students) ───── */}
-      <section className="ethos-section">
-        <div className="ethos-inner">
-          <div className="ethos-visual-col">
-            <div className="ethos-badge">
-              <span>Hyderabad</span>
+        <section className="outcomes-section" id="outcomes">
+          <div className="section-shell">
+            <div className="outcomes-heading">
+              <div>
+                <p className="eyebrow">Member outcomes</p>
+                <h2>Universities our Varsity members have been accepted into</h2>
+              </div>
+              <div className="outcomes-copy">
+                <p className="country-line">United States <span>•</span> United Kingdom <span>•</span> Canada</p>
+                <p>Our Varsity members have earned admission to some of the most prestigious universities across the United States, United Kingdom, and Canada.</p>
+              </div>
             </div>
-            <h2 className="ethos-headline">Built by <em>Students</em>,<br />for <em>Students</em>.</h2>
+            <div className="university-grid">
+              {universities.map((university) => (
+                <article className="university-card" key={university.name} title={university.name}>
+                  <div className="university-logo">
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain_url=https://${university.domain}&sz=128`}
+                      alt={`${university.name} logo`}
+                      loading="lazy"
+                    />
+                  </div>
+                  <h3>{university.short}</h3>
+                  <p>{university.name}</p>
+                </article>
+              ))}
+            </div>
+            <div className="outcomes-cta">
+              <p>Join Varsity. Become a member. Shape your future.</p>
+              <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-light">Start your application <Arrow /></a>
+            </div>
           </div>
-          <div className="ethos-text-col">
-            <p className="ethos-subline">A grassroots revolution in high school athletics.</p>
-            <p className="ethos-desc">
-              Varsity Sports in Hyderabad is a grassroots sports organization revolutionizing high school and youth athletics. 
-              Inspired by American high school sports formats, it organizes high-intensity, professional league-style competitions—such as 
-              basketball, football, and volleyball—for top local schools and students.
-            </p>
-            <div className="ethos-cta-row">
-              <a 
-                href="https://www.instagram.com/varsitysports.hyd/?hl=en" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn btn-ghost btn-instagram"
-              >
-                <svg className="instagram-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                </svg>
-                @varsitysports.hyd
+        </section>
+
+        <section className="press-section" id="press">
+          <div className="section-shell">
+            <div className="press-heading">
+              <div><p className="eyebrow">In the press</p><h2>The movement is making headlines.</h2></div>
+              <p>Varsity Sports is putting school athletes under the lights and changing how Hyderabad experiences youth sport.</p>
+            </div>
+            <div className="press-grid">
+              {pressStories.map((story, index) => (
+                <a className={`press-card ${index === 0 ? 'featured' : ''}`} href={story.href} target="_blank" rel="noreferrer" key={story.href}>
+                  <div className="press-meta"><span>{story.source}</span><time>{story.date}</time></div>
+                  <h3>{story.title}</h3>
+                  <p>{story.copy}</p>
+                  <span className="card-link">Read the story <Arrow /></span>
+                </a>
+              ))}
+              <a className="video-card" href="https://www.youtube.com/watch?v=NuQ1UyCKOJI" target="_blank" rel="noreferrer">
+                <img src="https://img.youtube.com/vi/NuQ1UyCKOJI/maxresdefault.jpg" alt="Varsity Sports event highlights" loading="lazy" />
+                <span className="play-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l9 6-9 6z" /></svg></span>
+                <div><p>Watch Varsity</p><h3>See the energy for yourself</h3></div>
               </a>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ───── MEDIA SHOWCASE & PRESS SECTION ───── */}
-      <section className="media-section">
-        <div className="media-inner">
-          <p className="media-eyebrow">Varsity Sports in the Spotlight</p>
-          <div className="media-grid">
-            {/* Left: Press Articles */}
-            <div className="press-col">
-              <div className="press-card">
-                <span className="press-source">The New Indian Express</span>
-                <h3>"Varsity Sports: Revolutionising high school athletics in Hyderabad"</h3>
-                <p>Highlighting how Varsity Sports is transforming student involvement and bringing high-school sports formats to life.</p>
-                <a 
-                  href="https://www.newindianexpress.com/cities/hyderabad/2024/Jul/09/varsity-sports-revolutionising-high-school-athletics-in-hyderabad" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="read-more-link"
-                >
-                  Read Article →
-                </a>
-              </div>
-
-              <div className="press-card">
-                <span className="press-source">Deccan Chronicle</span>
-                <h3>"Hyderabad's biggest school football championship reaches grand finale"</h3>
-                <p>Covering the explosive finals and the immense turnout from top schools across the city.</p>
-                <a 
-                  href="https://www.deccanchronicle.com/sports/hyderabads-biggest-school-football-championship-reaches-grand-finale-1887862" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="read-more-link"
-                >
-                  Read Article →
-                </a>
-              </div>
+        <section className="apply-section" id="apply">
+          <div className="section-shell apply-layout">
+            <div className="apply-copy">
+              <p className="eyebrow">Membership applications</p>
+              <h2>Become a<br /><em>Varsity member.</em></h2>
+              <p>Tell us who you are and what you want to bring to the season. Every application is reviewed by our team.</p>
+              <ul><li>No prior event experience required</li><li>Full season support and mentorship</li><li>Certificate and recommendation letter</li></ul>
+              <a className="instagram-link" href="https://www.instagram.com/varsitysports.hyd/?hl=en" target="_blank" rel="noreferrer">Follow @varsitysports.hyd <Arrow /></a>
             </div>
-
-            {/* Right: Video Play Link Card */}
-            <div className="video-col">
-              <a 
-                href="https://www.youtube.com/watch?v=NuQ1UyCKOJI" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="video-play-card"
-              >
-                <div className="video-thumbnail-container">
-                  <img 
-                    src="https://img.youtube.com/vi/NuQ1UyCKOJI/hqdefault.jpg" 
-                    alt="Varsity Sports Highlights Video" 
-                    className="video-thumbnail-img"
-                  />
-                  <div className="video-play-button">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+            <div className="form-wrap">
+              {status === 'done' ? (
+                <div className="success-card"><span>✓</span><p className="eyebrow">Application received</p><h3>Welcome to the next play.</h3><p>Thank you for applying. Our team will review your details and get back to you soon.</p><button className="text-link" onClick={() => setStatus('idle')}>Submit another application <Arrow /></button></div>
+              ) : (
+                <form className="apply-form" method="POST" action={SPLITFORMS_ENDPOINT} encType="multipart/form-data" onSubmit={handleSubmit}>
+                  <input type="hidden" name="access_key" value={SPLITFORMS_ACCESS_KEY} />
+                  <input type="checkbox" name="botcheck" className="botcheck" tabIndex={-1} autoComplete="off" />
+                  <div className="form-row">
+                    <label><span>Full name</span><input name="name" required placeholder="Your full name" value={form.name} onChange={update('name')} /></label>
+                    <label><span>School or college</span><input name="school" required placeholder="Institution name" value={form.school} onChange={update('school')} /></label>
                   </div>
-                </div>
-              </a>
-              <div className="video-info">
-                <h4>Experience the Intensity</h4>
-                <p>Catch a glimpse of the professional-league level organization and high school energy at our tournaments. Click to watch highlights on YouTube.</p>
-              </div>
+                  <div className="form-row">
+                    <label><span>Grade or year</span><input name="grade" required placeholder="For example, Grade 11" value={form.grade} onChange={update('grade')} /></label>
+                    <label><span>Phone number</span><input name="phone" type="tel" required placeholder="+91 98765 43210" value={form.phone} onChange={update('phone')} /></label>
+                  </div>
+                  <label><span>Email address</span><input name="email" type="email" required placeholder="you@example.com" value={form.email} onChange={update('email')} /></label>
+                  <label><span>Resume or portfolio link</span><input name="resume_link" type="url" required placeholder="A public Drive, portfolio, or profile link" value={form.resume_link} onChange={update('resume_link')} /></label>
+                  <label><span>What would you bring to Varsity?</span><textarea name="experience" required placeholder="Tell us about your interests, skills, projects, clubs, or sports experience." value={form.experience} onChange={update('experience')} /></label>
+                  {status === 'error' && <p className="form-error">We could not send your application. Please check your connection and try again.</p>}
+                  <button type="submit" className="btn btn-primary submit-button" disabled={status === 'submitting'}>{status === 'submitting' ? 'Sending application...' : <>Submit application <Arrow /></>}</button>
+                </form>
+              )}
             </div>
           </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <div className="section-shell footer-row">
+          <a className="brand" href="#home" onClick={scrollToSection('home')}><img src={logoImg} alt="" /><span>Varsity Sports</span></a>
+          <p>Changing sports in India.</p>
+          <div><a href="#outcomes" onClick={scrollToSection('outcomes')}>Member outcomes</a><a href="#press" onClick={scrollToSection('press')}>Press</a><a href="#apply" onClick={scrollToSection('apply')}>Become a member</a></div>
         </div>
-      </section>
-
-      {/* ───── APPLICATION FORM ───── */}
-      <section id="apply" className="apply-section">
-        <div className="apply-inner">
-          {/* Left: headline */}
-          <div className="apply-headline-col">
-            <p className="apply-eyebrow">Join the Team</p>
-            <h2 className="apply-headline">Apply as a<br /><em>Varsity Volunteer</em></h2>
-            <p className="apply-desc">
-              Fill in your details — it only takes a couple of minutes. We review every application personally.
-            </p>
-            <div className="apply-perks">
-              <div className="perk-item">
-                <svg className="perk-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                No experience required
-              </div>
-              <div className="perk-item">
-                <svg className="perk-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Full season support
-              </div>
-              <div className="perk-item">
-                <svg className="perk-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Certificate + letter
-              </div>
-            </div>
-          </div>
-
-          {/* Right: form */}
-          <div className="apply-form-col">
-            {status === 'done' ? (
-              <div className="thankyou-card">
-                <div className="thankyou-icon">✓</div>
-                <h3>We got it!</h3>
-                <p>Thanks for applying — we'll review your details and get back to you soon.</p>
-                <button className="btn btn-ghost" onClick={() => setStatus('idle')} style={{marginTop:'1rem'}}>
-                  Apply Again
-                </button>
-              </div>
-            ) : (
-              <form
-                className="apply-form"
-                method="POST"
-                action={SPLITFORMS_ENDPOINT}
-                enctype="multipart/form-data"
-                onSubmit={handleSubmit}
-              >
-                <input type="hidden" name="access_key" value={SPLITFORMS_ACCESS_KEY} />
-                <input type="checkbox" name="botcheck" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
-
-                <div className="form-row">
-                  <div className="field">
-                    <label htmlFor="name">Full Name</label>
-                    <input id="name" name="name" type="text" required placeholder="Your full name" value={form.name} onChange={update('name')} />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="school">School</label>
-                    <input id="school" name="school" type="text" required placeholder="School / College name" value={form.school} onChange={update('school')} />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="field">
-                    <label htmlFor="grade">Grade / Year</label>
-                    <input id="grade" name="grade" type="text" required placeholder="e.g. 11th grade" value={form.grade} onChange={update('grade')} />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="phone">Phone No.</label>
-                    <input id="phone" name="phone" type="tel" required placeholder="+91 98765 43210" value={form.phone} onChange={update('phone')} />
-                  </div>
-                </div>
-
-                <div className="field">
-                  <label htmlFor="email">Email Address</label>
-                  <input id="email" name="email" type="email" required placeholder="you@email.com" value={form.email} onChange={update('email')} />
-                </div>
-
-                {/* Resume URL Link Input */}
-                <div className="field">
-                  <label htmlFor="resume_link">Resume / Portfolio Link</label>
-                  <input 
-                    id="resume_link" 
-                    name="resume_link" 
-                    type="url" 
-                    required 
-                    placeholder="e.g. Google Drive PDF link, GitHub, or Portfolio website" 
-                    value={form.resume_link} 
-                    onChange={update('resume_link')} 
-                  />
-                  <p className="field-hint" style={{ fontSize: '0.78rem', color: 'var(--gray)', marginTop: '0.2rem' }}>
-                    Please share a public link to your resume (PDF) or online portfolio.
-                  </p>
-                </div>
-
-                <div className="field">
-                  <label htmlFor="experience">Past Experience in Organizing</label>
-                  <textarea
-                    id="experience"
-                    name="experience"
-                    required
-                    value={form.experience}
-                    onChange={update('experience')}
-                    placeholder="Tell us about any events, clubs, or sports teams you've helped organize..."
-                  />
-                </div>
-
-                {status === 'error' && (
-                  <p className="error-text">Something went wrong — please try again.</p>
-                )}
-
-                <div className="submit-row">
-                  <button type="submit" className="btn btn-primary" disabled={status === 'submitting'}>
-                    {status === 'submitting' ? 'Submitting…' : 'Submit Application →'}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ───── FOOTER ───── */}
-      <footer className="footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <div className="footer-logo-circle">
-              <img src={logoImg} alt="Varsity Sports" className="footer-logo" />
-            </div>
-            <div>
-              <p className="footer-brand-name">Varsity Sports</p>
-              <p className="footer-brand-sub">Changing Sports in India</p>
-            </div>
-          </div>
-          <div className="footer-links">
-            <a href="#home" onClick={scrollToSection('home')}>Home</a>
-            <a href="#about" onClick={scrollToSection('about')}>About</a>
-            <a href="#apply" onClick={scrollToSection('apply')}>Apply</a>
-          </div>
-          <div className="footer-contact">
-            <p className="footer-contact-label">Reach Us</p>
-            <a href="mailto:meghanadh.pamidi@gmail.com">meghanadh.pamidi@gmail.com</a>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>© 2026 Varsity Sports. All rights reserved.</p>
-          <p className="powered-by">
-            Powered by{' '}
-            <a href="https://telugu.social" target="_blank" rel="noopener noreferrer">
-              telugu.social
-            </a>
-          </p>
-        </div>
+        <div className="section-shell footer-bottom"><p>© 2026 Varsity Sports. All rights reserved.</p><p>Hyderabad, India</p></div>
       </footer>
     </>
   );

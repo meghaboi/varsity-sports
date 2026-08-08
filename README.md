@@ -1,7 +1,7 @@
-# Varsity Sports — Volunteer Recruitment Site
+# Varsity Sports Member Recruitment Site
 
 Mobile-first, black/gold/white site: an animated hero landing page and a
-volunteer application form.
+member application form.
 
 ## Stack
 - Vite + React + react-router-dom
@@ -23,7 +23,7 @@ Applications are sent via [SplitForms](https://splitforms.com):
 
 ## Logo
 Drop your logo file as `public/logo.png` (already present in this repo per
-your note — just make sure the filename matches, or update the `src` in
+your note. Make sure the filename matches, or update the `src` in
 `src/pages/Home.jsx` / `index.html`).
 
 ## Push to GitHub
