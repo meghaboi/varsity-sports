@@ -20,7 +20,8 @@ export default function Globe() {
           .backgroundColor('rgba(0,0,0,0)')
           .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg')
           .bumpImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png')
-          .showAtmosphere(true);
+          .showAtmosphere(true)
+          .pointOfView({ lat: 20, lng: 78, altitude: 1.65 });
 
         // Configure controls
         const controls = world.controls();

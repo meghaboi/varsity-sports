@@ -265,22 +265,30 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: Video Embed */}
+            {/* Right: Video Play Link Card */}
             <div className="video-col">
-              <div className="video-wrapper">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/NuQ1UyCKOJI"
-                  title="Varsity Sports Highlights"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                ></iframe>
-              </div>
+              <a 
+                href="https://www.youtube.com/watch?v=NuQ1UyCKOJI" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="video-play-card"
+              >
+                <div className="video-thumbnail-container">
+                  <img 
+                    src="https://img.youtube.com/vi/NuQ1UyCKOJI/hqdefault.jpg" 
+                    alt="Varsity Sports Highlights Video" 
+                    className="video-thumbnail-img"
+                  />
+                  <div className="video-play-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
               <div className="video-info">
                 <h4>Experience the Intensity</h4>
-                <p>Catch a glimpse of the professional-league level organization and high school energy at our tournaments.</p>
+                <p>Catch a glimpse of the professional-league level organization and high school energy at our tournaments. Click to watch highlights on YouTube.</p>
               </div>
             </div>
           </div>
