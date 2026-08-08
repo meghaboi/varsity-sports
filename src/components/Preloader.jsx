@@ -10,7 +10,7 @@ export default function Preloader({ onDone }) {
   useEffect(() => {
     // ───── PROGRESS BAR SIMULATION ─────
     const start = performance.now();
-    const duration = 2500;
+    const duration = 2800;
     let rafId;
 
     const tick = (now) => {
@@ -29,6 +29,7 @@ export default function Preloader({ onDone }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
@@ -40,7 +41,6 @@ export default function Preloader({ onDone }) {
     };
     window.addEventListener('resize', handleResize);
 
-    // Mouse interaction coordinates
     const mouse = { x: -1000, y: -1000 };
     const handleMouseMove = (e) => {
       mouse.x = e.clientX;
@@ -53,23 +53,21 @@ export default function Preloader({ onDone }) {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseleave', handleMouseLeave);
 
-    // Boids definition
     const boids = [];
-    const numBoids = 65; // increased count as requested
+    const numBoids = 75; // high density of boids
 
     class Boid {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 4;
-        this.vy = (Math.random() - 0.5) * 4;
-        this.size = Math.random() * 2 + 3;
-        this.maxSpeed = 3.5;
-        this.minSpeed = 1.5;
+        this.vx = (Math.random() - 0.5) * 5;
+        this.vy = (Math.random() - 0.5) * 5;
+        this.size = Math.random() * 2 + 3.5;
+        this.maxSpeed = 4.5;
+        this.minSpeed = 2.0;
       }
 
       update() {
-        // Simple boids logic: Flock together & avoid mouse
         let avgX = 0, avgY = 0, avgVx = 0, avgVy = 0, neighbors = 0;
         let avoidX = 0, avoidY = 0;
 
@@ -79,14 +77,14 @@ export default function Preloader({ onDone }) {
           const dy = other.y - this.y;
           const dist = Math.hypot(dx, dy);
 
-          if (dist < 80) {
+          if (dist < 100) {
             avgX += other.x;
             avgY += other.y;
             avgVx += other.vx;
             avgVy += other.vy;
             neighbors++;
 
-            if (dist < 25) {
+            if (dist < 30) {
               avoidX -= dx;
               avoidY -= dy;
             }
@@ -99,30 +97,24 @@ export default function Preloader({ onDone }) {
           avgVx /= neighbors;
           avgVy /= neighbors;
 
-          // Cohesion (steer to center)
-          this.vx += (avgX - this.x) * 0.005;
-          this.vy += (avgY - this.y) * 0.005;
+          this.vx += (avgX - this.x) * 0.006;
+          this.vy += (avgY - this.y) * 0.006;
 
-          // Alignment (steer to avg velocity)
-          this.vx += (avgVx - this.vx) * 0.02;
-          this.vy += (avgVy - this.vy) * 0.02;
+          this.vx += (avgVx - this.vx) * 0.025;
+          this.vy += (avgVy - this.vy) * 0.025;
         }
 
-        // Separation (avoid crowding)
-        this.vx += avoidX * 0.05;
-        this.vy += avoidY * 0.05;
+        this.vx += avoidX * 0.06;
+        this.vy += avoidY * 0.06;
 
-        // Mouse avoidance behavior
         const mdx = mouse.x - this.x;
         const mdy = mouse.y - this.y;
         const mdist = Math.hypot(mdx, mdy);
-        if (mdist < 150) {
-          // Push away from mouse
-          this.vx -= (mdx / mdist) * 0.45;
-          this.vy -= (mdy / mdist) * 0.45;
+        if (mdist < 180) {
+          this.vx -= (mdx / mdist) * 0.6;
+          this.vy -= (mdy / mdist) * 0.6;
         }
 
-        // Limit speed
         const speed = Math.hypot(this.vx, this.vy);
         if (speed > this.maxSpeed) {
           this.vx = (this.vx / speed) * this.maxSpeed;
@@ -135,7 +127,6 @@ export default function Preloader({ onDone }) {
         this.x += this.vx;
         this.y += this.vy;
 
-        // Wrap around boundaries
         if (this.x < 0) this.x = width;
         if (this.x > width) this.x = 0;
         if (this.y < 0) this.y = height;
@@ -148,12 +139,11 @@ export default function Preloader({ onDone }) {
         ctx.translate(this.x, this.y);
         ctx.rotate(angle);
 
-        // Draw boid as a sleek glowing arrowhead
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 10;
         ctx.shadowColor = '#d4af37';
-        ctx.fillStyle = 'rgba(212, 175, 87, 0.8)';
+        ctx.fillStyle = 'rgba(212, 175, 87, 0.85)';
         ctx.beginPath();
-        ctx.moveTo(this.size * 2, 0);
+        ctx.moveTo(this.size * 2.2, 0);
         ctx.lineTo(-this.size, -this.size * 0.7);
         ctx.lineTo(-this.size * 0.5, 0);
         ctx.lineTo(-this.size, this.size * 0.7);
@@ -163,7 +153,6 @@ export default function Preloader({ onDone }) {
       }
     }
 
-    // Initialize boids
     for (let i = 0; i < numBoids; i++) {
       boids.push(new Boid());
     }
@@ -205,6 +194,7 @@ export default function Preloader({ onDone }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        background: '#080808', // Solid background so the home page doesn't show underneath
         opacity: fading ? 0 : 1,
         transition: 'opacity 0.5s ease',
         pointerEvents: fading ? 'none' : 'all',
