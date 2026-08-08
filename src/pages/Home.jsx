@@ -10,15 +10,13 @@ const initialForm = {
   grade: '',
   phone: '',
   email: '',
+  resume_link: '',
   experience: '',
 };
 
 export default function Home() {
   const [form, setForm] = useState(initialForm);
-  const [resumeFile, setResumeFile] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | submitting | done | error
-  const [dragOver, setDragOver] = useState(false);
-  const fileInputRef = useRef();
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -30,25 +28,6 @@ export default function Home() {
     }
   };
 
-  const handleFile = (file) => {
-    if (file) setResumeFile(file);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      handleFile(file);
-      // Sync the file into the file input element's files list so standard form serialization works
-      if (fileInputRef.current) {
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        fileInputRef.current.files = dt.files;
-      }
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formElement = e.currentTarget;
@@ -56,21 +35,9 @@ export default function Home() {
     try {
       const data = new FormData(formElement);
 
-      // Always overwrite with the file in state to ensure we don't send an empty File object
-      if (resumeFile) {
-        data.set('resume', resumeFile);
-      } else {
-        data.delete('resume');
-      }
-
-      // Console log the form data to help debug exactly what is transmitted by the browser
       console.log('--- Preparing SplitForms Submission ---');
       for (let [key, val] of data.entries()) {
-        if (val instanceof File) {
-          console.log(`[File] ${key}: "${val.name}" (${val.size} bytes, type: ${val.type})`);
-        } else {
-          console.log(`[Field] ${key}: "${val}"`);
-        }
+        console.log(`[Field] ${key}: "${val}"`);
       }
       console.log('---------------------------------------');
 
@@ -84,7 +51,6 @@ export default function Home() {
       if (res.ok && result.success) {
         setStatus('done');
         setForm(initialForm);
-        setResumeFile(null);
       } else {
         setStatus('error');
       }
@@ -394,49 +360,21 @@ export default function Home() {
                   <input id="email" name="email" type="email" required placeholder="you@email.com" value={form.email} onChange={update('email')} />
                 </div>
 
-                {/* Custom file upload */}
+                {/* Resume URL Link Input */}
                 <div className="field">
-                  <label>Resume / CV</label>
-                  <div
-                    className={`file-upload-zone ${dragOver ? 'drag-over' : ''} ${resumeFile ? 'has-file' : ''}`}
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                    onDragLeave={() => setDragOver(false)}
-                    onDrop={handleDrop}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-                  >
-                    <input
-                      ref={fileInputRef}
-                      id="resume"
-                      name="resume"
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      required
-                      style={{ display: 'none' }}
-                      onChange={(e) => handleFile(e.target.files?.[0])}
-                    />
-                    {resumeFile ? (
-                      <>
-                        <div className="file-upload-icon file-upload-icon--done">✓</div>
-                        <p className="file-upload-name">{resumeFile.name}</p>
-                        <p className="file-upload-hint">Click to replace</p>
-                      </>
-                    ) : (
-                      <>
-                        <div className="file-upload-icon">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                          </svg>
-                        </div>
-                        <p className="file-upload-label">Drag &amp; drop your resume here</p>
-                        <p className="file-upload-hint">or click to browse — PDF, DOC, DOCX</p>
-                      </>
-                    )}
-                  </div>
+                  <label htmlFor="resume_link">Resume / Portfolio Link</label>
+                  <input 
+                    id="resume_link" 
+                    name="resume_link" 
+                    type="url" 
+                    required 
+                    placeholder="e.g. Google Drive PDF link, GitHub, or Portfolio website" 
+                    value={form.resume_link} 
+                    onChange={update('resume_link')} 
+                  />
+                  <p className="field-hint" style={{ fontSize: '0.78rem', color: 'var(--gray)', marginTop: '0.2rem' }}>
+                    Please share a public link to your resume (PDF) or online portfolio.
+                  </p>
                 </div>
 
                 <div className="field">
