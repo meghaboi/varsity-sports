@@ -188,7 +188,7 @@ export default function Home() {
                 </a>
               ))}
               <a className="video-card" href="https://www.youtube.com/watch?v=NuQ1UyCKOJI" target="_blank" rel="noreferrer">
-                <img src="https://img.youtube.com/vi/NuQ1UyCKOJI/maxresdefault.jpg" alt="Varsity Sports event highlights" loading="lazy" />
+                <img src="https://i.ytimg.com/vi/NuQ1UyCKOJI/sddefault.jpg" alt="Varsity Sports championship trophy and event highlights" loading="lazy" />
                 <span className="play-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l9 6-9 6z" /></svg></span>
                 <div><p>Watch Varsity</p><h3>See the energy for yourself</h3></div>
               </a>
