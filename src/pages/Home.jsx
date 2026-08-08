@@ -194,6 +194,99 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ───── ETHOS SECTION (Built by Students, for Students) ───── */}
+      <section className="ethos-section">
+        <div className="ethos-inner">
+          <div className="ethos-visual-col">
+            <div className="ethos-badge">
+              <span>Hyderabad</span>
+            </div>
+            <h2 className="ethos-headline">Built by <em>Students</em>,<br />for <em>Students</em>.</h2>
+          </div>
+          <div className="ethos-text-col">
+            <p className="ethos-subline">A grassroots revolution in high school athletics.</p>
+            <p className="ethos-desc">
+              Varsity Sports in Hyderabad is a grassroots sports organization revolutionizing high school and youth athletics. 
+              Inspired by American high school sports formats, it organizes high-intensity, professional league-style competitions—such as 
+              basketball, football, and volleyball—for top local schools and students.
+            </p>
+            <div className="ethos-cta-row">
+              <a 
+                href="https://www.instagram.com/varsitysports.hyd/?hl=en" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn btn-ghost btn-instagram"
+              >
+                <svg className="instagram-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+                @varsitysports.hyd
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── MEDIA SHOWCASE & PRESS SECTION ───── */}
+      <section className="media-section">
+        <div className="media-inner">
+          <p className="media-eyebrow">Varsity Sports in the Spotlight</p>
+          <div className="media-grid">
+            {/* Left: Press Articles */}
+            <div className="press-col">
+              <div className="press-card">
+                <span className="press-source">The New Indian Express</span>
+                <h3>"Varsity Sports: Revolutionising high school athletics in Hyderabad"</h3>
+                <p>Highlighting how Varsity Sports is transforming student involvement and bringing high-school sports formats to life.</p>
+                <a 
+                  href="https://www.newindianexpress.com/cities/hyderabad/2024/Jul/09/varsity-sports-revolutionising-high-school-athletics-in-hyderabad" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="read-more-link"
+                >
+                  Read Article →
+                </a>
+              </div>
+
+              <div className="press-card">
+                <span className="press-source">Deccan Chronicle</span>
+                <h3>"Hyderabad's biggest school football championship reaches grand finale"</h3>
+                <p>Covering the explosive finals and the immense turnout from top schools across the city.</p>
+                <a 
+                  href="https://www.deccanchronicle.com/sports/hyderabads-biggest-school-football-championship-reaches-grand-finale-1887862" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="read-more-link"
+                >
+                  Read Article →
+                </a>
+              </div>
+            </div>
+
+            {/* Right: Video Embed */}
+            <div className="video-col">
+              <div className="video-wrapper">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/NuQ1UyCKOJI"
+                  title="Varsity Sports Highlights"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              <div className="video-info">
+                <h4>Experience the Intensity</h4>
+                <p>Catch a glimpse of the professional-league level organization and high school energy at our tournaments.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ───── APPLICATION FORM ───── */}
       <section id="apply" className="apply-section">
         <div className="apply-inner">
