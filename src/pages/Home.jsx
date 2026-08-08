@@ -47,9 +47,11 @@ export default function Home() {
     try {
       const data = new FormData(e.currentTarget);
 
-      // Verify that the file is in the FormData
-      if (resumeFile && !data.get('resume')) {
+      // Always overwrite with the file in state to ensure we don't send an empty File object
+      if (resumeFile) {
         data.set('resume', resumeFile);
+      } else {
+        data.delete('resume');
       }
 
       const res = await fetch(SPLITFORMS_ENDPOINT, {
