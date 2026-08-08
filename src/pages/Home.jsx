@@ -43,9 +43,10 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formElement = e.currentTarget;
     setStatus('submitting');
     try {
-      const data = new FormData(e.currentTarget);
+      const data = new FormData(formElement);
 
       // Always overwrite with the file in state to ensure we don't send an empty File object
       if (resumeFile) {
@@ -53,6 +54,17 @@ export default function Home() {
       } else {
         data.delete('resume');
       }
+
+      // Console log the form data to help debug exactly what is transmitted by the browser
+      console.log('--- Preparing SplitForms Submission ---');
+      for (let [key, val] of data.entries()) {
+        if (val instanceof File) {
+          console.log(`[File] ${key}: "${val.name}" (${val.size} bytes, type: ${val.type})`);
+        } else {
+          console.log(`[Field] ${key}: "${val}"`);
+        }
+      }
+      console.log('---------------------------------------');
 
       const res = await fetch(SPLITFORMS_ENDPOINT, {
         method: 'POST',
@@ -68,7 +80,8 @@ export default function Home() {
       } else {
         setStatus('error');
       }
-    } catch {
+    } catch (err) {
+      console.error('Submission error:', err);
       setStatus('error');
     }
   };
