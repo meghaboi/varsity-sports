@@ -238,7 +238,11 @@ export default function Home() {
           <p>Changing sports in India.</p>
           <div><a href="#outcomes" onClick={scrollToSection('outcomes')}>Member outcomes</a><a href="#press" onClick={scrollToSection('press')}>Press</a><a href="#apply" onClick={scrollToSection('apply')}>Become a member</a></div>
         </div>
-        <div className="section-shell footer-bottom"><p>© 2026 Varsity Sports. All rights reserved.</p><p>Hyderabad, India</p></div>
+        <div className="section-shell footer-bottom">
+          <p>© 2026 Varsity Sports. All rights reserved.</p>
+          <p>Hyderabad, India</p>
+          <p>Powered by <a href="https://telugu.social" target="_blank" rel="noreferrer">telugu.social</a></p>
+        </div>
       </footer>
     </>
   );
