@@ -22,6 +22,14 @@ export default function Home() {
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
+  const scrollToSection = (id) => (e) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleFile = (file) => {
     if (file) setResumeFile(file);
   };
@@ -105,7 +113,7 @@ export default function Home() {
           </div>
           <div className="hero-nav-right">
             <span className="nav-tag">Volunteer Recruitment</span>
-            <a href="#apply" className="btn btn-sm">Apply Now</a>
+            <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-sm">Apply Now</a>
           </div>
         </nav>
 
@@ -124,8 +132,8 @@ export default function Home() {
               Earn a first-tier college app activity, recommendation letters, and a certificate.
             </p>
             <div className="hero-ctas">
-              <a href="#apply" className="btn btn-primary">Apply Now →</a>
-              <a href="#about" className="btn btn-ghost">Learn More →</a>
+              <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-primary">Apply Now →</a>
+              <a href="#about" onClick={scrollToSection('about')} className="btn btn-ghost">Learn More →</a>
             </div>
 
             <div className="hero-stats">
@@ -471,9 +479,9 @@ export default function Home() {
             </div>
           </div>
           <div className="footer-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#apply">Apply</a>
+            <a href="#home" onClick={scrollToSection('home')}>Home</a>
+            <a href="#about" onClick={scrollToSection('about')}>About</a>
+            <a href="#apply" onClick={scrollToSection('apply')}>Apply</a>
           </div>
           <div className="footer-contact">
             <p className="footer-contact-label">Reach Us</p>
