@@ -41,13 +41,13 @@ export default function Preloader({ onDone }) {
           color1: 0xc9a227,
           color2: 0xf0c84a,
           colorMode: 'lerp',
-          birdSize: 1.2,
-          wingSpan: 28,
-          speedLimit: 4,
-          separation: 60,
-          alignment: 40,
-          cohesion: 25,
-          quantity: 3,
+          birdSize: 1.4,
+          wingSpan: 40,
+          speedLimit: 6,
+          separation: 55,
+          alignment: 45,
+          cohesion: 30,
+          quantity: 7,
         });
       }
     };
