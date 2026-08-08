@@ -5,5 +5,8 @@ import react from '@vitejs/plugin-react';
 // https://<user>.github.io/varsity-sports/
 export default defineConfig({
   plugins: [react()],
-  base: '/varsity-sports/'
+  base: (process.env.CF_PAGES || process.env.VITE_BASE_PATH === '/') ? '/' : '/varsity-sports/',
+  build: {
+    chunkSizeWarningLimit: 1200
+  }
 });

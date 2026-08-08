@@ -1,45 +1,37 @@
-# Varsity Sports Member Recruitment Site
+# Varsity Sports
 
-Mobile-first, black/gold/white site: an animated hero landing page and a
-member application form.
+The Varsity Sports member website, built with Vite and React.
 
-## Stack
-- Vite + React + react-router-dom
-- `ogl` for the WebGL hero animation (`src/components/AcidSquares.jsx`)
-- SplitForms (splitforms.com) for form → email delivery & dashboard storage (no backend needed)
-- GitHub Actions → GitHub Pages for deployment
+## Local development
 
-## Local dev
 ```bash
 npm install
 npm run dev
 ```
 
-## Form Backend (SplitForms)
-Applications are sent via [SplitForms](https://splitforms.com):
-- Endpoint: `https://splitforms.com/api/submit`
-- Access key: configured in `src/config.js` (`SPLITFORMS_ACCESS_KEY`).
-- Each submission is stored in the SplitForms dashboard and emailed directly to your inbox.
+## Production build
 
-## Logo
-Drop your logo file as `public/logo.png` (already present in this repo per
-your note. Make sure the filename matches, or update the `src` in
-`src/pages/Home.jsx` / `index.html`).
-
-## Push to GitHub
 ```bash
-git init
-git branch -M main
-git remote add origin https://github.com/meghaboi/varsity-sports.git
-git add .
-git commit -m "Initial Varsity Sports site"
-git push -u origin main
+npm run build
 ```
 
-## Enable GitHub Pages
-In the repo on GitHub: **Settings → Pages → Source → GitHub Actions**.
-The included workflow (`.github/workflows/deploy.yml`) builds and deploys
-automatically on every push to `main`.
+## Cloudflare Pages
 
-Once it runs, the site will be live at:
-**https://meghaboi.github.io/varsity-sports/**
+Use these Cloudflare Pages settings:
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Deploy command: `npm run deploy:cloudflare`
+
+Do not use `npx wrangler deploy`. That command targets Cloudflare Workers. This repository is configured for Pages and uses `wrangler pages deploy`.
+
+For GitHub Actions deployments, add these repository secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+The API token needs Account, Cloudflare Pages, Edit permission. Once both secrets exist, `.github/workflows/cloudflare-pages.yml` deploys every push to `main`.
+
+## GitHub Pages
+
+The existing GitHub Pages workflow remains available. Its production URL is https://meghaboi.github.io/varsity-sports/.
