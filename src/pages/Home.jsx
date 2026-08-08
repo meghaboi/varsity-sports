@@ -101,23 +101,6 @@ export default function Home() {
               <a href="#apply" onClick={scrollToSection('apply')} className="btn btn-primary">Apply Now →</a>
               <a href="#about" onClick={scrollToSection('about')} className="btn btn-ghost">Learn More →</a>
             </div>
-
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-num">01</span>
-                <span className="stat-label">Season-Long</span>
-              </div>
-              <div className="stat-divider" />
-              <div className="stat">
-                <span className="stat-num">∞</span>
-                <span className="stat-label">Opportunities</span>
-              </div>
-              <div className="stat-divider" />
-              <div className="stat">
-                <span className="stat-num">100%</span>
-                <span className="stat-label">Exclusive</span>
-              </div>
-            </div>
           </div>
 
           {/* Right — 3D Globe component */}
@@ -305,9 +288,24 @@ export default function Home() {
               Fill in your details — it only takes a couple of minutes. We review every application personally.
             </p>
             <div className="apply-perks">
-              <div className="perk-item">✓ No experience required</div>
-              <div className="perk-item">✓ Full season support</div>
-              <div className="perk-item">✓ Certificate + letter</div>
+              <div className="perk-item">
+                <svg className="perk-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                No experience required
+              </div>
+              <div className="perk-item">
+                <svg className="perk-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Full season support
+              </div>
+              <div className="perk-item">
+                <svg className="perk-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Certificate + letter
+              </div>
             </div>
           </div>
 
