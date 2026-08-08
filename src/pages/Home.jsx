@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Silk from '../components/Silk.jsx';
 import Basketball from '../components/Basketball.jsx';
 import StatsSection from '../components/StatsSection.jsx';
+import CountdownSection from '../components/CountdownSection.jsx';
 import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY } from '../config.js';
 import logoImg from '../assets/logo-mark.png';
 
@@ -87,7 +88,7 @@ export default function Home() {
   return (
     <>
       <header className="hero" id="home">
-        <div className="hero-bg"><Silk color="#251701" speed={7} scale={1.25} noiseIntensity={1.35} rotation={0.1} /></div>
+        <div className="hero-bg"><Silk color="#4a2d04" speed={8} scale={1.15} noiseIntensity={1.15} rotation={0.1} /></div>
         <div className="hero-overlay" />
         <nav className="site-nav" aria-label="Main navigation">
           <a className="brand" href="#home" onClick={scrollToSection('home')}>
@@ -119,6 +120,7 @@ export default function Home() {
 
       <main>
         <StatsSection />
+        <CountdownSection />
         <section className="about-section" id="about">
           <div className="section-shell">
             <div className="section-intro">
