@@ -15,38 +15,74 @@ export default function Preloader({ onDone }) {
     let animationFrame;
     let progressFrame;
     let doneTimer;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    const pointer = { x: 0, y: 0, active: false };
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const resize = () => {
-      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+      width = canvas.parentElement?.clientWidth || window.innerWidth;
+      height = canvas.parentElement?.clientHeight || window.innerHeight;
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * pixelRatio);
+      canvas.height = Math.round(height * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     };
 
     resize();
+    const flockSize = Math.min(320, Math.max(180, Math.floor((width * height) / 5000)));
+    const motionConfig = reducedMotion ? {
+      maxSpeed: 1.15,
+      maxForce: 0.018,
+      perceptionRadius: 48,
+      separationDistance: 24,
+      separationWeight: 1.5,
+      alignmentWeight: 1,
+      cohesionWeight: 1,
+    } : undefined;
     const flock = Array.from(
-      { length: reducedMotion ? 36 : 120 },
-      () => new Boid(Math.random() * canvas.width, Math.random() * canvas.height)
+      { length: flockSize },
+      () => new Boid(Math.random() * width, Math.random() * height)
     );
+    const colors = ['#efd392', '#d5ad57', '#a45145'];
+
+    const updatePointer = (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      pointer.active = true;
+    };
+    const clearPointer = () => { pointer.active = false; };
+
     const draw = () => {
-      context.fillStyle = 'rgba(8, 8, 6, 0.2)';
-      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = 'rgba(8, 8, 6, 0.28)';
+      context.fillRect(0, 0, width, height);
       flock.forEach((boid) => {
-        if (!reducedMotion) {
-          boid.flock(flock);
-          boid.update(canvas.width, canvas.height);
+        boid.flock(flock, motionConfig);
+
+        if (pointer.active) {
+          const dx = pointer.x - boid.position.x;
+          const dy = pointer.y - boid.position.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance > 18 && distance < 260) {
+            const response = reducedMotion ? 0.006 : 0.014;
+            boid.applyForce({ x: (dx / distance) * response, y: (dy / distance) * response });
+          }
         }
+
+        boid.update(width, height, motionConfig);
 
         const angle = Math.atan2(boid.velocity.y, boid.velocity.x);
         context.save();
         context.translate(boid.position.x, boid.position.y);
         context.rotate(angle);
+        context.scale(boid.visualScale, boid.visualScale);
         context.beginPath();
         context.moveTo(10, 0);
         context.lineTo(-6, -4);
         context.lineTo(-3, 0);
         context.lineTo(-6, 4);
         context.closePath();
-        context.fillStyle = '#d5ad57';
+        context.fillStyle = colors[boid.colorIndex];
         context.fill();
         context.restore();
       });
@@ -62,6 +98,8 @@ export default function Preloader({ onDone }) {
     };
 
     window.addEventListener('resize', resize);
+    window.addEventListener('pointermove', updatePointer, { passive: true });
+    document.documentElement.addEventListener('pointerleave', clearPointer);
     draw();
     progressFrame = requestAnimationFrame(updateProgress);
     doneTimer = window.setTimeout(() => {
@@ -75,6 +113,8 @@ export default function Preloader({ onDone }) {
       clearTimeout(doneTimer);
       clearTimeout(exitTimerRef.current);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('pointermove', updatePointer);
+      document.documentElement.removeEventListener('pointerleave', clearPointer);
     };
   }, [onDone]);
 

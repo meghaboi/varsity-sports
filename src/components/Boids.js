@@ -32,7 +32,11 @@ export class Boid {
     const angle = Math.random() * Math.PI * 2;
     this.velocity = new Vector2D(Math.cos(angle), Math.sin(angle)).mult(Math.random() * 2 + 1);
     this.acceleration = new Vector2D(0, 0);
+    this.visualScale = Math.random() * 0.65 + 0.65;
+    this.colorIndex = Math.floor(Math.random() * 3);
   }
+
+  applyForce(force) { this.acceleration.add(force); }
 
   update(width, height, config = DEFAULT_CONFIG) {
     this.velocity.add(this.acceleration).limit(config.maxSpeed);

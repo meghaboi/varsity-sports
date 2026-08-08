@@ -57,7 +57,8 @@ svg { display: block; }
 .preloader { position: fixed; inset: 0; z-index: 15000; display: grid; place-items: center; overflow: hidden; background: #050503; opacity: 1; transition: opacity .6s ease, visibility .6s ease; }
 .preloader.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
 .preloader-canvas, .preloader-vignette { position: absolute; inset: 0; width: 100%; height: 100%; }
-.preloader-vignette { background: radial-gradient(circle at center, transparent 10%, rgba(5, 5, 3, .34) 52%, rgba(5, 5, 3, .94) 100%); }
+.preloader-canvas { opacity: .96; }
+.preloader-vignette { pointer-events: none; background: radial-gradient(circle at center, transparent 24%, rgba(5, 5, 3, .22) 62%, rgba(5, 5, 3, .78) 100%); }
 .preloader-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; width: min(480px, calc(100% - 48px)); text-align: center; }
 .preloader-logo { width: 104px; aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 0 30px rgba(213, 173, 87, .24)); margin-bottom: 1.6rem; }
 .preloader-kicker { color: var(--gold); font-size: .62rem; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; }
@@ -225,6 +226,17 @@ svg { display: block; }
 .footer-bottom a { color: rgba(213,173,87,.72); transition: color .2s ease; }
 .footer-bottom a:hover { color: var(--gold-light); }
 
+/* Scroll choreography */
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0) scale(.985);
+  transition: opacity .55s cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms), transform .55s cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.scroll-reveal.is-visible { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+.metrics-grid article.scroll-reveal, .benefit-grid article.scroll-reveal, .university-card.scroll-reveal, .press-grid > .scroll-reveal { transform: translate3d(0, 34px, 0); }
+.metrics-grid article.scroll-reveal.is-visible, .benefit-grid article.scroll-reveal.is-visible, .university-card.scroll-reveal.is-visible, .press-grid > .scroll-reveal.is-visible { transform: translate3d(0, 0, 0); }
+
 @media (max-width: 960px) {
   .site-nav { width: calc(100% - 40px); grid-template-columns: 1fr auto; }
   .nav-links { display: none; }
@@ -300,4 +312,5 @@ svg { display: block; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .custom-cursor { display: none; }
+  .scroll-reveal { opacity: 1; transform: none; }
 }
