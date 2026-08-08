@@ -30,17 +30,27 @@ export default function Home() {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) handleFile(file);
+    if (file) {
+      handleFile(file);
+      // Sync the file into the file input element's files list so standard form serialization works
+      if (fileInputRef.current) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInputRef.current.files = dt.files;
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('submitting');
     try {
-      const data = new FormData();
-      data.append('access_key', SPLITFORMS_ACCESS_KEY);
-      Object.entries(form).forEach(([k, v]) => data.append(k, v));
-      if (resumeFile) data.append('resume', resumeFile);
+      const data = new FormData(e.currentTarget);
+
+      // Verify that the file is in the FormData
+      if (resumeFile && !data.get('resume')) {
+        data.set('resume', resumeFile);
+      }
 
       const res = await fetch(SPLITFORMS_ENDPOINT, {
         method: 'POST',
@@ -328,6 +338,7 @@ export default function Home() {
                 className="apply-form"
                 method="POST"
                 action={SPLITFORMS_ENDPOINT}
+                enctype="multipart/form-data"
                 onSubmit={handleSubmit}
               >
                 <input type="hidden" name="access_key" value={SPLITFORMS_ACCESS_KEY} />
