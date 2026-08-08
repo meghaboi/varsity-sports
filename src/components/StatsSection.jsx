@@ -55,9 +55,9 @@ export default function StatsSection() {
           <h2 id="metrics-title">Built by students.<br />Seen by millions.</h2>
         </div>
         <div className="metrics-grid">
-          <article><strong><CountUp value={2000} /></strong><p>Athletes</p></article>
+          <article><strong><CountUp value={2500} /></strong><p>Athletes</p></article>
           <article><strong><CountUp value={150} /></strong><p>Schools</p></article>
-          <article><strong><CountUp value={40} suffix="M+" /></strong><p>Views reached</p></article>
+          <article><strong><CountUp value={50} suffix="M+" /></strong><p>People reached</p></article>
         </div>
       </div>
     </section>
