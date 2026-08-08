@@ -6,7 +6,7 @@ volunteer application form.
 ## Stack
 - Vite + React + react-router-dom
 - `ogl` for the WebGL hero animation (`src/components/AcidSquares.jsx`)
-- Formspree for form → email delivery (no backend needed)
+- SplitForms (splitforms.com) for form → email delivery & dashboard storage (no backend needed)
 - GitHub Actions → GitHub Pages for deployment
 
 ## Local dev
@@ -15,14 +15,11 @@ npm install
 npm run dev
 ```
 
-## Email setup (change the recipient any time)
-Applications are sent via [Formspree](https://formspree.io):
-1. Create a free Formspree account and a new form, using `meghanadh.pamidi@gmail.com`
-   as the destination address.
-2. Copy the form ID (the part after `/f/` in your endpoint URL) into
-   `src/config.js` → `FORMSPREE_FORM_ID`.
-3. To change the recipient later, just update the address on the form in
-   your Formspree dashboard — no code changes needed.
+## Form Backend (SplitForms)
+Applications are sent via [SplitForms](https://splitforms.com):
+- Endpoint: `https://splitforms.com/api/submit`
+- Access key: configured in `src/config.js` (`SPLITFORMS_ACCESS_KEY`).
+- Each submission is stored in the SplitForms dashboard and emailed directly to your inbox.
 
 ## Logo
 Drop your logo file as `public/logo.png` (already present in this repo per

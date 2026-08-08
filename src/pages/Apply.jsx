@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FORMSPREE_FORM_ID } from '../config.js';
+import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY } from '../config.js';
 
 const initialForm = {
   name: '',
@@ -24,16 +24,24 @@ export default function Apply() {
 
     try {
       const data = new FormData();
-      Object.entries(form).forEach(([k, v]) => data.append(k, v));
+      data.append('access_key', SPLITFORMS_ACCESS_KEY);
+      data.append('name', form.name);
+      data.append('school', form.school);
+      data.append('grade', form.grade);
+      data.append('phone', form.phone);
+      data.append('email', form.email);
+      data.append('experience', form.experience);
       if (resumeFile) data.append('resume', resumeFile);
 
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
+      const res = await fetch(SPLITFORMS_ENDPOINT, {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: data
       });
 
-      if (res.ok) {
+      const result = await res.json().catch(() => ({}));
+
+      if (res.ok && result.success) {
         setStatus('done');
         setForm(initialForm);
         setResumeFile(null);
@@ -55,31 +63,35 @@ export default function Apply() {
 
       {status === 'done' && (
         <div className="thankyou-bar">
-          Thank you for applying! We've received your details and will get back to you soon.
+          Thanks, we got it! We've received your details and will get back to you soon.
         </div>
       )}
 
       {status !== 'done' && (
-        <form className="apply-form" onSubmit={handleSubmit}>
+        <form className="apply-form" method="POST" action={SPLITFORMS_ENDPOINT} onSubmit={handleSubmit}>
+          <input type="hidden" name="access_key" value={SPLITFORMS_ACCESS_KEY} />
+          <input type="checkbox" name="botcheck" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
           <div className="field">
             <label htmlFor="name">Name</label>
-            <input id="name" type="text" required value={form.name} onChange={update('name')} />
+            <input id="name" name="name" type="text" required value={form.name} onChange={update('name')} />
           </div>
 
           <div className="field">
             <label htmlFor="school">School</label>
-            <input id="school" type="text" required value={form.school} onChange={update('school')} />
+            <input id="school" name="school" type="text" required value={form.school} onChange={update('school')} />
           </div>
 
           <div className="field">
             <label htmlFor="grade">Grade</label>
-            <input id="grade" type="text" required value={form.grade} onChange={update('grade')} />
+            <input id="grade" name="grade" type="text" required value={form.grade} onChange={update('grade')} />
           </div>
 
           <div className="field">
             <label htmlFor="resume">Resume / CV</label>
             <input
               id="resume"
+              name="resume"
               type="file"
               accept=".pdf,.doc,.docx"
               required
@@ -89,18 +101,19 @@ export default function Apply() {
 
           <div className="field">
             <label htmlFor="phone">Phone No.</label>
-            <input id="phone" type="tel" required value={form.phone} onChange={update('phone')} />
+            <input id="phone" name="phone" type="tel" required value={form.phone} onChange={update('phone')} />
           </div>
 
           <div className="field">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" required value={form.email} onChange={update('email')} />
+            <input id="email" name="email" type="email" required value={form.email} onChange={update('email')} />
           </div>
 
           <div className="field">
             <label htmlFor="experience">Past experience in organizing</label>
             <textarea
               id="experience"
+              name="experience"
               required
               value={form.experience}
               onChange={update('experience')}
@@ -122,3 +135,4 @@ export default function Apply() {
     </div>
   );
 }
+
